@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ruman/u0/linked_list/linked_list.cpp
+cstdlib
+-
+iostream
+-
+ctime
+-
+chrono
+-
+vector
+-
+

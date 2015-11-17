@@ -1,0 +1,1 @@
+/opt/intel/compilers_and_libraries_2016.0.109/linux/bin/intel64/icpc   -std=c++11 -O3 -Wall -Werror -DNDEBUG -mmic -ftree-vectorize -ftree-vectorizer-verbose=2 -fopt-info-vec-missed   CMakeFiles/matmat.dir/main.cpp.o CMakeFiles/matmat.dir/matmat.cpp.o  -o matmat -rdynamic 

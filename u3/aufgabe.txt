@@ -1,0 +1,43 @@
+Aufgabe 2
+=========
+
+Data array size: 1024*1024, calculated for complete array,
+1,000,000 iterations
+
+Xeon Phi
+--------
+
+Threads	Runtime (s)	Speedup
+1	125.568		1
+60	2.66343		~47
+120	1.64861		~76
+240	1.64861		~76
+
+Host
+----
+
+Threads	Runtime (s)	Speedup
+1	75.9534		1
+2	38.0503		~1,99
+4	19.515		~3,89
+8	9.98105		~7,6
+
+Mann kann deutlich einen Zusammenhang mit Amdahls Law erkennen,
+der eine Begrenzung des Speedups vorgibt, abhängig vom anteil
+der parallelen arbeit und den Kernen.
+Beim Xeon Phi werden sehr hohe Speedups gemessen, die nach Amdahls
+Law sogar über den Werten für parallel portion = 95% liegen.
+
+Da auch beim Host ein höherer Speedup als x6 erzeugt wird und in dem
+Programm ja 1,000,000 iterationen parallelisiert werden ist die parallel portion höher als 95%
+
+Sie muss sein:
+
+76 = 1 / ( 1 - p + p / 120 )
+<=> p = 2250 / 2261 ~= 0,995
+
+Beim Host bei 8 threads ergibt das einen Speedup von
+
+S = 1 / (1 - p + p / 8) = 7,7365269
+
+der gut zu dem gemessenen wert passt.

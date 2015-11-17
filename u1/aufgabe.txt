@@ -1,0 +1,78 @@
+Aufgabe 1
+=========
+
+* Suppose a program has a Method M that cannot be parallelized, and that this method accounts for 40% of the program's execution time. What is the limit for the overall speedup 
+that can be achieved by running the program on an n-processor machine?
+
+p = 1-40% = 60% parallel portion
+
+S = 1 / ( 1 - 0.6 + 0.6 / n ) = 1 / ( 0.4 + 0.6 / n )
+
+* Suppose the method M accounts for 30% of the program's computation time. What should 
+be the speedup of M so that the overall execution time improves by a factor of 2?
+
+p = 1 - 30% = 70% parallel portion
+2 = 1 / ( 1 - 0.7 + 0.7 / n ) = 1 / ( 0.3 + 0.7 / n )
+
+<=> 1 / 2 = 0.3 + 0.7 / n
+<=> 0.2 = 0.7 / n
+<=> n = 3.5
+
+You'll need 3.5 processors.
+
+* Suppose the method M can be sped up three-fold. What fraction of the overall execution 
+time must M account for in order to double the overall speedup of the program?
+
+3 = 1 / ( 1 - p + p / n )
+<=> 1 / 3 = 1 - p + p / n
+<=> 1 / p = 3 / 2 - 3 / (2n)
+<=> p = 1 / ( 3 / 2 - 3 / (2n))
+
+n->inf => p = 2/3
+
+The parallel fraction must be 2/3
+
+Aufgabe 2
+=========
+
+* Running your application on two processors yields speedup S2. Use Amdahl's Law to derive a formula for Sn, the speedup on 
+n processors, in terms of n and S2.
+
+S2 = 1 / ( 1 - p + p / 2 )
+<=> -2/S2 + 2 = p
+
+=> Sn = 1 / ( 1 + 2 / S2 - 2 + (-2/S2 + 2) / n ) = 1 / ( 2 / S2 - 1 + (-2/S2 + 2) / n )
+
+Aufgabe 3
+=========
+
+* You have a choice between buying one single-core CPU that executes five zillion instructions per 
+second, or a ten-core CPU where each core executes one zillion instruction per second. Using 
+Amdahl's Law, explain how you would decide which to buy for a particular application. 
+
+We want to be faster than the single core CPU, so we expect a speedup of >5. Based on this we can calculate a p threshold.
+Based on this either the single core CPU or the multi core CPU is chosen.
+
+5 < Sn
+<=> 1/5 > 1 - p + p / 10
+<=> 9/10p > 4/5
+<=> p > 8/9
+
+Only if the parallel fraction is greater than 8/9 we would use the parallel processor.
+
+Aufgabe 4
+=========
+
+* You will find an option TARGET_MIC declared. How is this option used within the CMakeLists script?
+
+If TARGET_MIC is set, add the option -mmic to the already defined C++ make flags.
+
+* Before you execute your program on the host/Xeon Phi: what's the performance you can expect in 
+terms of GFLOPS/s? Consider that this program will only be run on a single thread for this 
+exercise.
+
+I expect a higher GFLOPS/s for the host CPU as a core of Xeon Phi can only achieve 1.053 * 8 * 2 = ~17 GFLOPS/s, while one core of the host can achieve 200 GFLOPS/s [both host CPUs] / 2 / 4 = 25 GFLOPS/s. 
+
+* Does your implementation meet your expectations when run on the Xeon/Xeon Phi?
+
+The program does not achieve high GFLOPS/s of up to 25 GFLOPS/s, but only ~3.6 GFLOPS/s for Xeon Phi and 6.4 GFLOPS/s for host processor. This outcome can be explained by the non-floating operations that are also called while measuing times. Nevertheless the Xeon Phi is actually worse than the host processor as expected.

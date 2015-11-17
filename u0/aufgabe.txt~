@@ -1,0 +1,123 @@
+Aufgabe 1
+=========
+
+Für was stehen die Optionen -X und -C?
+
+-X -> X-Server (Grafik) über SSH weiterleiten
+-C -> Komprimierung der übertragenen Daten
+
+Aufgabe 2
+=========
+
+Wieviele dieser Karten sind im System registriert?
+4
+
+micinfo -listDevices
+micsmc
+
+Sind alle Karten online?
+ja
+
+micctrl -s
+
+Welcher Serientyp ist konkret vorhanden?
+micsmc
+
+Intel(R) Xeon Phi(TM) coprocessor x100 family
+
+micsmc -> Advanced -> Info
+
+
+Wieviel Speicher befindet sich auf jeder Karte?
+
+7936 MB
+
+micinfo
+
+Wieviele CPU-Cores befinden auf jeder Karte/insgesamt im System?
+
+60 / Karte
+micinfo
+
+240 / System
+micsmsc
+
+Wieviele Hardware-Threads können gleichzeitig aktiv gescheduled werden?
+
+4 Threads / Kern * 60 Kerne / Karte = 240 Threads / Karte
+
+* 4 Karten = 960 Threads
+
+
+Wie groß ist der Last-Level Cache auf dem Host-Rechner/auf dem Xeon Phi pro CPU-Kern/System?
+
+Host: 10240K
+
+Phi: 512KB / Core / Thread * 4 Threads = 2048 KB / Core
+* 60 Cores = 122880 KB pro Karte
+* 4 Karten = 491520 KB
+ 
+
+lscpu
+cat /proc/cpuinfo
+
+Aufgabe 3
+=========
+
+./dot 5 -> Ergebnis 1043166230, 24780ns
+
+cmake_minimum_required(VERSION 2.8) <- Mindestversion CMake
+
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Werror -fopenmp") <- C++ flags: C++ 11 standard, alle Warnungen anzeigen, Alle Warnungen als Fehler, Benutze OpenMP
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g") <- Flags für Debug: O0 = Keine Optimierung, -g = Debug-Informationen generieren
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG") <- Flags für Release: Maximale optimierung (O3), Definiere Macro NDEBUG
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g") <- Flags für Release mit Debug-Info: Maximilae optimierung (O3), Definiere Macro NDEBUG, Debug-Informationen (-g)
+set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG") <- Optimiere auf kleine cache-Größe (Os), Definiere Macro NDEBUG
+
+add_executable(dot dot.cpp) <- Füge dot.cpp als code für dot executable hinzu
+
+Gemessene Zeit: ./dot 500 über ./perftest.sh (1000x ausführen, minimum nehmen)
+
+Release		18823ns
+Debug		21227ns
+MinSizeRel	18916ns
+RelWithDebInfo	18775ns
+
+-> Debug ist langsamer als die anderen konfigurationen
+
+Größe der binary:
+Release		14084 byte
+Debug		62613 byte
+MinSizeRel	14063 byte
+RelWithDebInfo	60484 byte
+
+-> Debug informationen vergrößern die Datei
+
+
+Aufgabe 4
+=========
+
+Durchgeführt mit perftest.sh (40x, minimum)
+
+	Linked List	Vector
+2	1430ns		5258ns
+4	1555ns		5634ns
+8	2117ns		8449ns
+16	2978ns		9373ns
+32	5193ns		12720ns
+64	10409ns		16937ns
+128	30776ns		29826ns
+256	84310ns		58348ns
+512	315986ns	119670ns
+1024	1097325ns	235510ns
+2048	4014129ns	404831ns
+4096	19373280ns	968450ns
+8192	87766556ns	2481935ns
+
+Für wenige Elemente ist die linked list etwas besser, für viele 
+Elemente ist der Vector deutlich besser.
+Es lohnt sich nur in wenigen Fällen überhaupt eine linked list zu benutzen.
+
+
+
+

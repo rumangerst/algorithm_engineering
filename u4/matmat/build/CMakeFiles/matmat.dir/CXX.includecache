@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+..//matmat.hpp
+
+/home/ruman/u4/matmat/main.cpp
+matmat.hpp
+-
+iostream
+-
+chrono
+-
+
+/home/ruman/u4/matmat/matmat.cpp
+matmat.hpp
+/home/ruman/u4/matmat/matmat.hpp
+iostream
+-
+cstdlib
+-
+
+/home/ruman/u4/matmat/matmat.hpp
+

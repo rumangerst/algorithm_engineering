@@ -1,0 +1,64 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(125,3)
+   remark #15388: vectorization support: reference A has aligned access   [ /home/ruman/u4/matmat/main.cpp(126,5) ]
+   remark #15388: vectorization support: reference B has aligned access   [ /home/ruman/u4/matmat/main.cpp(129,5) ]
+   remark #15305: vectorization support: vector length 8
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.062
+   remark #15301: FUSED LOOP WAS VECTORIZED
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 9 
+   remark #15477: vector loop cost: 1.000 
+   remark #15478: estimated potential speedup: 8.990 
+   remark #15487: type converts: 2 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(128,3)
+LOOP END
+
+LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(131,3)
+   remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
+LOOP END
+
+LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(137,3)
+   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria
+LOOP END
+
+LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(11,3) inlined into /home/ruman/u4/matmat/main.cpp(147,3)
+   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria
+
+   LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(13,5) inlined into /home/ruman/u4/matmat/main.cpp(147,3)
+      remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: print_result(const double *, int, int, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(11,3)
+   remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, double) cannot be vectorized   [ /home/ruman/u4/matmat/main.cpp(15,12) ]
+   remark #15382: vectorization support: call to function std::operator<<<std::char_traits<char>>(std::basic_ostream<char, std::char_traits<char>> &, const char *) cannot be vectorized   [ /home/ruman/u4/matmat/main.cpp(15,29) ]
+   remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, std::basic_ostream<char, std::char_traits<char>>::__ostream_type &(*)(std::basic_ostream<char, std::char_traits<char>>::__ostream_type &)) cannot be vectorized   [ /home/ruman/u4/matmat/main.cpp(17,10) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:std::basic_ostream<char, st line 15 and call:std::basic_ostream<char, st line 17
+   remark #15346: vector dependence: assumed OUTPUT dependence between  line 17 and  line 15
+
+   LOOP BEGIN at /home/ruman/u4/matmat/main.cpp(13,5)
+      remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, double) cannot be vectorized   [ /home/ruman/u4/matmat/main.cpp(15,12) ]
+      remark #15382: vectorization support: call to function std::operator<<<std::char_traits<char>>(std::basic_ostream<char, std::char_traits<char>> &, const char *) cannot be vectorized   [ /home/ruman/u4/matmat/main.cpp(15,29) ]
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   LOOP END
+LOOP END
+===========================================================================

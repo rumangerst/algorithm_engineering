@@ -1,0 +1,29 @@
+1. 
+
+Performance:
+
+1,000,000 iterations
+
+        No vectorization    Vectorization
+Host    0.12899s            0.148285s
+Phi     2.20162s            1.46716s
+
+On the host there is almost no difference, while the runtime
+is almost half with vectorization.
+
+Explanation:
+
+The vectorization leads to different est. speedups for host and coprocessor:
+
+Speedup (32,7) #1   (32,7) #2
+Host    2.910       3.780
+Phi     3.670       4.610
+
+2. 
+
+I would expect an increase of performance for both processors as
+there is no operation C*ß and no additition with α*A*B (also one read operation less due to C does not need to be read, only written).
+
+The Xeon Phi have a special function to handle intrinsic operations.
+In the matrix multiplication step, C[...] += alpha * [...] can be 
+calculated by Xeon Phi more efficiently.

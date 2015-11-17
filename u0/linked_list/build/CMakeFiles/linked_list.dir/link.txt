@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11 -Wall -Werror -fopenmp   CMakeFiles/linked_list.dir/linked_list.cpp.o  -o linked_list -rdynamic 

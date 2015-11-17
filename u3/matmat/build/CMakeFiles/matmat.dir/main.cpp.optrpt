@@ -1,0 +1,54 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(11,3) inlined into /home/ruman/u3/matmat/main.cpp(147,3)
+   remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, double) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,12) ]
+   remark #15382: vectorization support: call to function std::operator<<<std::char_traits<char>>(std::basic_ostream<char, std::char_traits<char>> &, const char *) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,29) ]
+   remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, std::basic_ostream<char, std::char_traits<char>>::__ostream_type &(*)(std::basic_ostream<char, std::char_traits<char>>::__ostream_type &)) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(17,10) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:std::basic_ostream<char, st line 15 and call:std::basic_ostream<char, st line 17
+   remark #15346: vector dependence: assumed OUTPUT dependence between  line 17 and  line 15
+
+   LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(13,5) inlined into /home/ruman/u3/matmat/main.cpp(147,3)
+      remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, double) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,12) ]
+      remark #15382: vectorization support: call to function std::operator<<<std::char_traits<char>>(std::basic_ostream<char, std::char_traits<char>> &, const char *) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,29) ]
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   LOOP END
+
+   LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(13,5) inlined into /home/ruman/u3/matmat/main.cpp(147,3)
+   LOOP END
+
+   LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(13,5) inlined into /home/ruman/u3/matmat/main.cpp(147,3)
+   LOOP END
+
+   LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(13,5) inlined into /home/ruman/u3/matmat/main.cpp(147,3)
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: print_result(const double *, int, int, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(11,3)
+   remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, double) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,12) ]
+   remark #15382: vectorization support: call to function std::operator<<<std::char_traits<char>>(std::basic_ostream<char, std::char_traits<char>> &, const char *) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,29) ]
+   remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, std::basic_ostream<char, std::char_traits<char>>::__ostream_type &(*)(std::basic_ostream<char, std::char_traits<char>>::__ostream_type &)) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(17,10) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:std::basic_ostream<char, st line 15 and call:std::basic_ostream<char, st line 17
+   remark #15346: vector dependence: assumed OUTPUT dependence between  line 17 and  line 15
+
+   LOOP BEGIN at /home/ruman/u3/matmat/main.cpp(13,5)
+      remark #15382: vectorization support: call to function std::basic_ostream<char, std::char_traits<char>>::operator<<(std::basic_ostream<char, std::char_traits<char>> *, double) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,12) ]
+      remark #15382: vectorization support: call to function std::operator<<<std::char_traits<char>>(std::basic_ostream<char, std::char_traits<char>> &, const char *) cannot be vectorized   [ /home/ruman/u3/matmat/main.cpp(15,29) ]
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   LOOP END
+LOOP END
+===========================================================================

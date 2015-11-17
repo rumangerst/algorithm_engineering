@@ -1,0 +1,66 @@
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
+#include <chrono>
+
+using namespace std;
+
+void print_vector(int *arr, int N)
+{
+	cout << "[";
+	
+	for(int i = 0; i < N; i++)
+	{
+		cout << arr[i];
+
+		if( i != N - 1)
+			cout << ", ";
+	}
+
+	cout << "]" << endl;
+}
+
+int main(int argc, char* argv[]) 
+{
+
+	auto start = std::chrono::high_resolution_clock::now();
+	
+	srand(time(0));
+
+	int N = stoi(argv[1]);
+
+	if(N <= 0)
+		return 1;
+
+	// Alternative method if we don't want to re-use the vectors
+	/*int S = 0;
+	
+	for(int i = 0; i < N; i++)
+	{
+		S += rand() * rand();
+	}*/
+
+	int v1[N];
+	int v2[N];
+	int S = 0;
+
+	for(int i = 0; i < N; i++)
+	{
+		int x1 = v1[i] = rand();
+		int x2 = v2[i] = rand();
+		
+		S += x1 * x2;
+	}
+	
+
+	auto finish = chrono::high_resolution_clock::now();    	
+
+	print_vector(v1, N);
+	print_vector(v2, N);
+	
+
+	cout << "Scalar product: " << S << endl;
+	cout << chrono::duration_cast<chrono::nanoseconds>(finish-start).count() << "ns" << endl;
+
+  	return 0;
+}
