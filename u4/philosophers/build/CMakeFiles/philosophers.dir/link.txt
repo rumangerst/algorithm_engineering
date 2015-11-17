@@ -1,1 +1,0 @@
-/opt/intel/compilers_and_libraries_2016.0.109/linux/bin/intel64/icpc   -std=c++11 -O3 -Wall -Werror -DNDEBUG -fopenmp -opt-streaming-stores=auto -mmic -qopt-report=5 -qopt-report-phase=vec   CMakeFiles/philosophers.dir/main.cpp.o  -o philosophers -rdynamic 
