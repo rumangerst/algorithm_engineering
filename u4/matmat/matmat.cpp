@@ -19,7 +19,7 @@ void matmat(double alpha, bool trans, double const* a,
   if (trans) 
   { 
     //Each column in A^T
-    #pragma omp for schedule(static)
+    #pragma omp parallel for schedule(static)
     for(int x = 0; x < m; ++x)
     {
       double const * a_row = a + x * lda;
@@ -30,12 +30,16 @@ void matmat(double alpha, bool trans, double const* a,
       {
 	
 	double * c_row = c + ldc * i;        
+	const double alpha_a_row_i = alpha * a_row[i];
 	
-	#pragma omp simd aligned(c:64)
-	#pragma vector aligned
-	for(int j = 0; j< k; ++j)
+	if(x == 0)
 	{
-	  c_row[j] *= beta;
+	  #pragma omp simd aligned(c:64)
+	  #pragma vector aligned
+	  for(int j = 0; j< k; ++j)
+	  {
+	    c_row[j] *= beta;
+	  }
 	}
 	
 	#pragma omp simd aligned(a, b, c:64)
@@ -43,7 +47,7 @@ void matmat(double alpha, bool trans, double const* a,
 	for(int j = 0; j < k; ++j)
 	{
 	  //cout << a_row[i] << " * " << b_row[j]<<endl;
-	  c_row[j] += a_row[i] * b_row[j];
+	  c_row[j] +=  alpha_a_row_i * b_row[j];
 	  
 	}            
 	
@@ -58,7 +62,7 @@ void matmat(double alpha, bool trans, double const* a,
   else 
   {
     
-    #pragma omp for schedule(static)
+    #pragma omp parallel for schedule(static)
     for(int i = 0; i < m; ++i) 
     {  // row
     
@@ -76,6 +80,8 @@ void matmat(double alpha, bool trans, double const* a,
     // Multiply    
     for(int x = 0; x < n; ++x) 
     {  
+      const double alpha_a_row_x = alpha * a_row[x];
+      
       // multiply operations
       #pragma omp simd aligned(a, b, c:64)
       #pragma vector aligned
@@ -83,7 +89,7 @@ void matmat(double alpha, bool trans, double const* a,
       {
 	double const * b_row =  b + ldb * x;
 	
-	c_row[j] += alpha * a_row[x] * b_row[j];
+	c_row[j] += alpha_a_row_x * b_row[j];
       }
     }
     }
