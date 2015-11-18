@@ -1,26 +1,8 @@
 Aufgabe 1
 =========
 
-Host
-----
+Siehe runtime_measurements.csv
 
-Matrix: n=m=k=16, 1.000.000x
+=> Bei vielen Fällen wird der Speedup bei mehr Kernen höher bis zu einem bestimmten Punkt, an dem bei mehr Kernen der Speedup wieder niedriger wird (Ausgelöst durch Overhead).
 
-Threads		A		Speedup(A)	A^T		Speedup(A^T)
-1
-2
-4
-8
-
-Xeon Phi
---------
-
-Matrix: n=m=k=16, 1.000.000x
-
-Threads		A		Speedup(A)	A^T		Speedup (A^T)
-1		28.9999s
-60		24.6985s
-120		28.1107s
-180		29.3198s
-240		31.3733s			59.1836s
 
