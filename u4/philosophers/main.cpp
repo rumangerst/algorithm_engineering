@@ -2,6 +2,7 @@
 #include <chrono>
 //#include <thread>
 //***** intel compiler does not support complete stl
+//Also cannot use boost::...::sleep_for because mic does not support it
 #include <unistd.h>
 #include <mutex>
 #include <random>
@@ -39,23 +40,19 @@ int main(int argc, char * argv[])
     omp_set_num_threads(N + 1); // 1 master + N philosophers
 
     // Monitor the time
-    int time_limit = stoi(argv[1]);
-    bool time_up = false;
+    int time_limit __attribute__((aligned(MEMORY_ALIGNMENT))) = stoi(argv[1]);
+    bool time_up __attribute__((aligned(MEMORY_ALIGNMENT))) = false;
 
     // There are N philosophers at the table
     // They are discussing
-    bool table[N] __attribute__((aligned(MEMORY_ALIGNMENT)));
+    bool table[N * 8] __attribute__((aligned(MEMORY_ALIGNMENT)));
 
     for(int i = 0; i < N; ++i)
-        table[i] = DISCUSSING;
+        table[i * 8] = DISCUSSING;
 
 
     // Remember the count of discussions
-    int discussions = 0;
-
-    // Times should be random
-    default_random_engine random_generator;
-    uniform_int_distribution<int> philosopher_time(DISCUSSION_EATING_TIME);
+    int discussions __attribute__((aligned(MEMORY_ALIGNMENT))) = 0;    
 
     // Monitor the time
     const high_resolution_clock::time_point time_start = high_resolution_clock::now();
@@ -79,14 +76,19 @@ int main(int argc, char * argv[])
         
     }
 
-    cout << "starting philosophers"<<endl;
+    //cout << "starting philosophers"<<endl;
 
     #pragma omp for schedule(static, 1)
     for(int i = 0; i < N; ++i)
     {
-        cout << "Philososopher "<< i << " comes alive" << endl;
+        //cout << "Philososopher "<< i << " comes alive" << endl;
         
         const int left_fork = i == 0 ? N - 1 : i - 1;
+
+        // Times should be random
+        // 1 object per thread prevents need of locks
+        default_random_engine random_generator __attribute__((aligned(MEMORY_ALIGNMENT)));
+        uniform_int_distribution<int> philosopher_time(DISCUSSION_EATING_TIME);
 
         while(!time_up)
         {        
@@ -94,6 +96,7 @@ int main(int argc, char * argv[])
             ++discussions;
 
             //this_thread::sleep_for(microseconds(philosopher_time(random_generator)));
+            //boost::this_thread::sleep_for(boost::chrono::microseconds(philosopher_time(random_generator)));
             usleep(philosopher_time(random_generator));
 
             bool can_eat = false;
@@ -105,14 +108,14 @@ int main(int argc, char * argv[])
                 
 		#pragma omp atomic capture
 		{
-		    x_left = table[left_fork];
-		    table[left_fork] = false;
+		    x_left = table[left_fork * 8];
+		    table[left_fork * 8] = false;
 		}
 
                 #pragma omp atomic capture
                 {
-                    x_right = table[i];
-                    table[i] = false;
+                    x_right = table[i * 8];
+                    table[i * 8] = false;
                 }
 
                 if(x_left && x_right)
@@ -128,29 +131,30 @@ int main(int argc, char * argv[])
                     //To be sure do not replace already existing forks
 
                     #pragma omp atomic update
-                    table[i] |= x_right;
+                    table[i * 8] |= x_right;
                    
                     #pragma omp atomic update
-                    table[left_fork] |= x_left;                   
+                    table[left_fork * 8] |= x_left;                   
                        
                 }
             }
 
             // The philosopher is eating
             //this_thread::sleep_for(microseconds(philosopher_time(random_generator)));
+            //boost::this_thread::sleep_for(boost::chrono::microseconds(philosopher_time(random_generator)));
             usleep(philosopher_time(random_generator));
 
             //Put the forks back
             #pragma omp atomic write
-            table[i] = true;
+            table[i * 8] = true;
 
             #pragma omp atomic write
-            table[left_fork] = true;
+            table[left_fork * 8] = true;
 
             //cout << "philosopher " << i << " finished eating" << endl;
         }      
         
-        cout << "philosopher " << i << "ended."  << endl;
+        //cout << "philosopher " << i << "ended."  << endl;
     }
     }
 

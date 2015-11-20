@@ -5,4 +5,16 @@ Siehe runtime_measurements.csv
 
 => Bei vielen Fällen wird der Speedup bei mehr Kernen höher bis zu einem bestimmten Punkt, an dem bei mehr Kernen der Speedup wieder niedriger wird (Ausgelöst durch Overhead).
 
+Aufgabe 2
+=========
 
+Philosophers, N + 1 threads, Host, 1-10 microsekunden eat/discussion
+
+Diskussionen:
+77267;75892;83434;79644;73694;55057;71643;63646;74853
+avg = 72792
+
+Xeon Phi
+
+8343;6158;8152;8147;7715;8176;8278;6177;7311;7397
+avg = 7585
