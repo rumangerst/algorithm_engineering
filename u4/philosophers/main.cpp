@@ -1,8 +1,11 @@
 #include <iostream>
 #include <chrono>
-#include <thread>
+//#include <thread>
+//***** intel compiler does not support complete stl
+#include <unistd.h>
 #include <mutex>
 #include <random>
+#include <omp.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -32,6 +35,8 @@ int main(int argc, char * argv[])
         cout << "philosophers <runtime s>" << endl;
         exit(EXIT_FAILURE);
     }
+    
+    omp_set_num_threads(N + 1); // 1 master + N philosophers
 
     // Monitor the time
     int time_limit = stoi(argv[1]);
@@ -53,11 +58,11 @@ int main(int argc, char * argv[])
     uniform_int_distribution<int> philosopher_time(DISCUSSION_EATING_TIME);
 
     // Monitor the time
-    auto time_start = high_resolution_clock::now();
+    const high_resolution_clock::time_point time_start = high_resolution_clock::now();
 
     //Create a time watcher thread
 
-    #pragma omp parallel
+    #pragma omp parallel shared(time_up)
     {
 
     #pragma omp master
@@ -65,8 +70,13 @@ int main(int argc, char * argv[])
     {
         const double dur = duration<double>(high_resolution_clock::now()-time_start).count();
 
-        #pragma omp atomic write
-        time_up = dur >= time_limit;
+	if(dur >= time_limit)
+	{
+            //#pragma omp atomic write
+            // Dont know why but leads to effect that this variable is not set!
+            time_up = true;
+        }       
+        
     }
 
     cout << "starting philosophers"<<endl;
@@ -79,11 +89,12 @@ int main(int argc, char * argv[])
         const int left_fork = i == 0 ? N - 1 : i - 1;
 
         while(!time_up)
-        {
+        {        
             #pragma omp atomic update
             ++discussions;
 
-            this_thread::sleep_for(microseconds(philosopher_time(random_generator)));
+            //this_thread::sleep_for(microseconds(philosopher_time(random_generator)));
+            usleep(philosopher_time(random_generator));
 
             bool can_eat = false;
 
@@ -126,7 +137,8 @@ int main(int argc, char * argv[])
             }
 
             // The philosopher is eating
-            this_thread::sleep_for(microseconds(philosopher_time(random_generator)));
+            //this_thread::sleep_for(microseconds(philosopher_time(random_generator)));
+            usleep(philosopher_time(random_generator));
 
             //Put the forks back
             #pragma omp atomic write
@@ -136,7 +148,9 @@ int main(int argc, char * argv[])
             table[left_fork] = true;
 
             //cout << "philosopher " << i << " finished eating" << endl;
-        }        
+        }      
+        
+        cout << "philosopher " << i << "ended."  << endl;
     }
     }
 
