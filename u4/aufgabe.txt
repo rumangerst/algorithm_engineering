@@ -8,13 +8,11 @@ Siehe runtime_measurements.csv
 Aufgabe 2
 =========
 
-Philosophers, N + 1 threads, Host, 1-10 microsekunden eat/discussion
+Philosophers, Host, 1-10 microsekunden eat/discussion
 
-Diskussionen:
-77267;75892;83434;79644;73694;55057;71643;63646;74853
-avg = 72792
+Host, 8 threads: 582130;611080;613977;604348;611901 -> avg = 604687
+Host, auto thr.: 605371;599098;606152;592874;602540 -> avg = 601207
+Phi, auto thr.:  6146;6213;6112;6226;6157           -> avg = 6171
 
-Xeon Phi
-
-8343;6158;8152;8147;7715;8176;8278;6177;7311;7397
-avg = 7585
+Bastian hat deutlich höhere Zahlen im 2 Mio bereich, der bei meiner implementierung nur beim Entfernen der usleep(...)-Zeilen erreicht wird. Bei ihm verändern sich auch die number of discussions bei höherer Thread-Zahl (threads > N), was bei mir nicht der fall ist.
+usleep(0) genügt (statt usleep(random)) genügt, dass die zahl der diskussionen sehr deutlich verändert wird (30-40 Mio -> ~1/2 mio)
