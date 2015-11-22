@@ -8,6 +8,9 @@ Siehe runtime_measurements.csv
 Aufgabe 2
 =========
 
+Problem: Wenn zb jeder Philosoph gleichzeigtig seine rechte Gabel nimmt und dann auf die linke Gabel wartet, warten alle Philosphen auf die linke Gabel. Es kommt zu einem dead lock.
+Ohne lock und ohne atomisierung kann es außerdem zu dem Fall kommen, dass ein Philosoph in einen Bereich schreibt, während der andere ließt oder zwei in den gleichen Bereich schreiben.
+
 Philosophers, Host, 1-10 microsekunden eat/discussion
 
 Host, 8 threads: 582130;611080;613977;604348;611901 -> avg = 604687
