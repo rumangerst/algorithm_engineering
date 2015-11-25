@@ -7,11 +7,17 @@
 #include <unordered_map>
 #include <vector>
 #include <forward_list>
+#include <random>
+
+#define RANDOM_TEST_ITERATIONS 1000000
+
+using namespace std;
 
 struct node 
 {
   // directed edges
   std::vector<node *> neighbors;
+  int index;
   int id;
 };
 
@@ -24,7 +30,10 @@ struct graph
 
 graph read_graph(char const* filename);
 int bfs(graph & g, node * u, node * v);
-void bfs_(graph & g, node * n, node * v, std::vector<int> & D, int dn);
+void bfs_(graph & g, node * u, node * v, std::vector<int> & D, int ds);
+
+void calculate_mean(graph & g);
+void random_test(graph & g);
 
 int main(int argc, char ** argv) 
 {
@@ -35,7 +44,9 @@ int main(int argc, char ** argv)
     auto g = read_graph(argv[1]);
     std::cout << "the graph has " << g.num_nodes
     << " nodes and " << g.num_edges << " edges\n";
-    // TODO continue from here
+    
+    random_test(g);
+    
   }
   catch(std::exception const& e) 
   {
@@ -45,6 +56,45 @@ int main(int argc, char ** argv)
   return 0;
 }
 
+void random_test(graph & g)
+{
+  random_device random_device;
+  default_random_engine random_generator(random_device());
+  uniform_int_distribution<uint> random_graph_index(0, g.num_nodes);
+  
+  vector<node*> nodes(g.num_nodes);
+  
+  for(node nd : g.nodes)
+  {
+    nodes.push_back(&nd);
+  }
+  
+  for(int i = 0; i < RANDOM_TEST_ITERATIONS; ++i)
+  {
+    int index_u;
+    int index_v;
+    
+    do
+    {
+      index_u = random_graph_index(random_generator);
+      index_v = random_graph_index(random_generator);
+    }
+    while(index_u != index_v);
+    
+    node * u = nodes[index_u];
+    node * v = nodes[index_v];
+    
+    int d = bfs(g, u, v);
+    
+    cout << "D(" << u->id << ", " << v->id << ") = " << d << endl;
+  }
+}
+
+void calculate_mean(graph & g)
+{
+  
+}
+
 int bfs(graph & g, node * u, node * v)
 {
   std::vector<int> D(g.num_nodes);
@@ -52,39 +102,34 @@ int bfs(graph & g, node * u, node * v)
   for(unsigned int i = 0; i < D.size(); ++i)
     D[i] = -1;
   
+  D[u->index] = 0;
+  
   bfs_(g, u, v, D, 0);
   
    // Return path if Dv != -1, returns -1 if there is no such path
-  return D[v->id];
+  return D[v->index];
 }
 
-void bfs_(graph & g, node * n, node * v, std::vector<int> & D, int dn)
+void bfs_(graph & g, node * u, node * v, std::vector<int> & D, int ds)
 {
-  //Current node = end node
-  if(n->id == v->id)
-    return;
-  
-  for(node * m : n->neighbors)
-  {    
-    if(m->id == v->id)
+  for(node * n : u->neighbors)
+  {
+    if(n == v)
     {
-      // If not visited or better path found
-      if(D[v->id] == -1 || D[v->id] > dn)
-	D[v->id] = dn + 1;      
+      if(D[v->index] == -1 || D[v->index] > ds + 1)
+	D[v->index] = ds + 1;
     }
     else
     {
-      // If distance is bigger than already existing distance, cancel
-      if(D[m->id] <= dn + 1)
+      if(D[n->index] != -1 && D[n->index] <= ds + 1)
 	continue;
-      
-      // If not visited or known distance is worse, update
-      else if(D[m->id] == -1 || D[m->id] > dn + 1)
-	D[m->id] = dn + 1;
-      
-      //Visit the other nodes if there may be better solutions OR end node not visited yet
-      if(D[v->id] == -1 || (D[v->id] != -1 && D[v->id] > dn + 2))
-	bfs_(g, m, v, D, dn + 1);
+      else
+	D[n->index] = ds + 1;
+    }
+    
+    if(( D[v->index] != -1 && D[v->index] > ds + 2) || D[v->index] == -1)
+    {
+      bfs_(g, n, v, D, ds + 1);
     }
   } 
 }
@@ -98,7 +143,10 @@ node * id_to_node(int id, graph & g, std::unordered_map<int, node *> & dict)
   g.nodes.push_front(node());
   n = &g.nodes.front();
   
-  //assign the id
+  //assign the index from node dictionary
+  n->index = dict.size() - 1;
+  
+  //Assign the id from src file 
   n->id = id;
   
   }
@@ -115,6 +163,7 @@ graph read_graph(char const* filename)
   std::unordered_map<int, node *> node_dict;
   graph g;
   g.num_nodes = 0;
+  g.num_edges = 0;
   while (std::getline(graph_file, line)) 
   {
     if('#' == line[0] || line.empty())
