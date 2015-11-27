@@ -131,7 +131,7 @@ int bfs(graph & g, node * const u, node * const v)
 
     #pragma omp parallel default(none) shared(D,g)
     {
-        #pragma omp single nowait
+        #pragma omp single
         bfs_(g, u, v, D, 0);
     }
 
