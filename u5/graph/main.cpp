@@ -98,18 +98,24 @@ void random_test(graph & g)
 void calculate_mean(graph & g)
 {
     double s = 0;
+    int connections = 0;
 
     for(node & u : g.nodes)
     {
         for(node & v : g.nodes)
         {
             int d = bfs(g, &u, &v);
-            cout << "D(" << u.id << ", " << v.id << ") = " << d << endl;
-            s += d;
+            //cout << "D(" << u.id << ", " << v.id << ") = " << d << endl;
+            
+            if(d != -1)
+            {
+              ++connections;
+              s += d;
+            }
         }
     }
 
-    s /= g.num_nodes;
+    s /= connections;
 
     cout << "Average distance: " << s << endl;
 }

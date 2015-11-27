@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
+
 set(CMAKE_CXX_FLAGS "-std=c++1y -pedantic -march=native -Wall -Werror -fopenmp")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")

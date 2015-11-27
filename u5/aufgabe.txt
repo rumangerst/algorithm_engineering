@@ -1,0 +1,18 @@
+Aufgabe 1
+=========
+
+Durchschnittlicher Abstand
+--------------------------
+
+Facebook:*
+Live Journal:*
+
+* wenn hier nichts steht, dann ist der Umstand daran schuld, dass man die Phi-Karten nicht benutzen kann wg. Bugs im Intel-Compiler und
+nicht unterstützten stl-Klassen (mic).
+
+Alternative Methode zur Parallelisierung
+----------------------------------------
+
+Es währe auch möglich gewesen "klassisch" zur parallelisieren (ohne Tasks).
+Es kann so paralellisiert werden, dass alle Nachbarn des aktuellen Knoten v über
+pragma omp for parallelisiert abgehandelt werden.
