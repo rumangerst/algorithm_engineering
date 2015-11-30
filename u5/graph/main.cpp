@@ -145,19 +145,58 @@ void bfs_(graph & g, node * const u, node * const v, atomic_vector<int> &D, cons
     {
         if(n == v)
         {
-            if(D[v->index].load() == -1 || D[v->index].load() > ds + 1)
+	    int dv;
+	    
+	    while((dv = D[v->index].exchange(-2)) == -2)
+	    {
+	      #pragma omp taskyield
+	    }
+	  
+            if(dv == -1 || dv > ds + 1)
                 D[v->index].store(ds + 1);
+	    else
+	        D[v->index].store(dv);
         }
         else
         {
-            if(D[n->index].load() != -1 && D[n->index].load() <= ds + 1)
+	    int dn;
+	    
+	    while((dn = D[n->index].exchange(-2)) == -2)
+	    {
+	      #pragma omp taskyield
+	    }
+	  
+            if(dn != -1 && dn <= ds + 1)
+	    {
+		D[n->index].store(dn);
                 continue;
+	    }
             else
                 D[n->index].store(ds + 1);
         }
 
-        #pragma omp task default(none) shared(g,D) firstprivate(n) if(( D[v->index].load() != -1 && D[v->index].load() > ds + 2) || D[v->index].load() == -1)
-        bfs_(g, n, v, D, ds + 1);
+        {
+	  int dv;
+	    
+	  while((dv = D[v->index].exchange(-2)) == -2)
+	  {
+	    #pragma omp taskyield
+	  }	  
+	  
+	  if(( dv != -1 && dv > ds + 2) || dv == -1)
+	  {
+	    D[v->index].store(dv);
+	    
+	    #pragma omp task default(none) shared(g,D) firstprivate(n) 
+	    bfs_(g, n, v, D, ds + 1);
+	  }
+	  else
+	  {
+	    D[v->index].store(dv);
+	  }
+	  
+	  
+	}
     }
 }
 
