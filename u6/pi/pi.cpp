@@ -1,0 +1,119 @@
+#include <stdexcept>
+#include <iostream>
+#include <random>
+#include <math.h>
+
+#include <mpi.h>
+#include <omp.h>
+
+using namespace std;
+
+#define R 1
+#define ITERATIONS 1000000
+
+class MPIManager
+{
+public:
+    MPIManager(int argc, char** argv)
+    {
+        if (MPI_SUCCESS != MPI_Init(&argc, &argv ))
+            throw std::runtime_error("called MPI_Init twice");
+    }
+    
+    ~MPIManager()
+    {
+        MPI_Finalize();
+    }
+
+    int commSize()
+    {
+        int s = 0;
+        MPI_Comm_size(MPI_COMM_WORLD, &s);
+
+        return s;
+    }
+
+    int commRank()
+    {
+        int r = 0;
+        MPI_Comm_rank(MPI_COMM_WORLD, &r);
+
+        return r;
+    }
+};
+
+struct hit_count
+{
+    int points_square_only = 0;
+    int points_circle_only = 0;
+};
+
+hit_count hit_test(int iterations)
+{
+    random_device random_device;
+    default_random_engine random_generator(random_device());
+    uniform_real_distribution<double> random_coordinate(-R, R);
+    
+    hit_count hits;
+    const double radius_squared = R * R;
+    
+    for(uint i = 0; i < ITERATIONS; ++i)
+    {
+        double x = random_coordinate(random_generator);
+        double y = random_coordinate(random_generator);        
+        
+        if(x*x + y*y <= radius_squared)
+            ++hits.points_circle_only;
+        else
+            ++hits.points_square_only;
+    }
+    
+    return hits;
+} 
+
+void calculate(MPIManager & mpi)
+{
+    const uint available_threads = omp_get_max_threads();
+    const uint iterations_per_thread = ITERATIONS / available_threads;
+    
+    hit_count final_hit_count;
+    
+    #pragma omp parallel default(none) shared(final_hit_count)
+    {
+        #pragma omp single nowait
+        for (uint i = 0; i < available_threads; ++i)
+        {
+            #pragma omp task
+            {
+                hit_count partial_hit_count = hit_test(iterations_per_thread);
+                
+                #pragma omp atomic update
+                final_hit_count.points_square_only += partial_hit_count.points_square_only;
+                
+                #pragma omp atomic update
+                final_hit_count.points_circle_only += partial_hit_count.points_circle_only;
+            }
+        }
+    }
+    
+    const double pi = 4.0 * final_hit_count.points_circle_only / (double)(final_hit_count.points_square_only + final_hit_count.points_circle_only);
+    
+    cout << "pi " << pi << endl;
+}
+
+int main(int argc, char** argv)
+{
+    try
+    {
+        MPIManager mpiMan(argc, argv);        
+	    calculate(mpiMan);
+    }
+    catch (exception const& e)
+    {
+        cerr << e.what() << endl;
+        return -1;
+    }
+
+    return 0;
+}
+
