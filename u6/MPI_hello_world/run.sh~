@@ -1,0 +1,5 @@
+#!/bin/bash
+
+PROGRAM=hello
+
+mpirun -machinefile ./machine_file /home/ruman/algorithm_engineering/u6/MPI_hello_world/build/$PROGRAM

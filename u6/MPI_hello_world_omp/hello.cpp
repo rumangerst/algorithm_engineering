@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <mpi.h>
+#include <omp.h>
 
 using namespace std;
 
@@ -41,9 +42,10 @@ int main(int argc, char** argv)
     try
     {
         MPIManager mpiMan(argc, argv);
-
+        
 	    cout << "hello world" << endl;
         cout << "Comm world size: " << mpiMan.commSize() << ", Comm rank: " << mpiMan.commRank() << endl;
+        cout << "Available threads: " << omp_get_max_threads() << endl;
     }
     catch (exception const& e)
     {

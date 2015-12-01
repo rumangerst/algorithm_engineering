@@ -1,0 +1,2 @@
+/home/ruman/algorithm_engineering/u6/MPI_hello_world_omp/build/CMakeFiles/hello.mic.dir
+/home/ruman/algorithm_engineering/u6/MPI_hello_world_omp/build/CMakeFiles/hello.dir

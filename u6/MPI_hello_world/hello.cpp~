@@ -42,7 +42,7 @@ int main(int argc, char** argv)
     {
         MPIManager mpiMan(argc, argv);
 
-	    cout << "hello world" << endl;
+	cout << "hello world" << endl;
         cout << "Comm world size: " << mpiMan.commSize() << ", Comm rank: " << mpiMan.commRank() << endl;
     }
     catch (exception const& e)

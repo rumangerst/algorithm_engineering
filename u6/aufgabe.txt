@@ -1,0 +1,13 @@
+Aufgabe 1
+---------
+
+Com world size: 6
+und ranks 0-5
+
+Aufgabe 2
+---------
+
+Host: Per MPI (2x) 4 threads
+4 x Phi: Je 240 threads
+
+-> Das Programm kann max 248 threads beschäftigen

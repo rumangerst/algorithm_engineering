@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ruman/algorithm_engineering/u6/MPI_hello_world/hello.cpp
+stdexcept
+-
+iostream
+-
+mpi.h
+-
+
