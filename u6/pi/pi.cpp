@@ -3,7 +3,7 @@
 #include <random>
 #include <math.h>
 
-#include <mpi.h>
+//#include <mpi.h>
 #include <omp.h>
 
 using namespace std;
@@ -11,7 +11,7 @@ using namespace std;
 #define R 1
 #define ITERATIONS 10000000
 
-class MPIManager
+/*class MPIManager
 {
 public:
     MPIManager(int argc, char** argv)
@@ -40,7 +40,7 @@ public:
 
         return r;
     }
-};
+};*/
 
 struct hit_count
 {
@@ -71,7 +71,7 @@ hit_count hit_test(int iterations)
     return hits;
 } 
 
-void calculate(MPIManager & mpi)
+void calculate()
 {
     const uint available_threads = omp_get_max_threads();
     const uint iterations_per_thread = ITERATIONS / available_threads;
@@ -95,7 +95,7 @@ void calculate(MPIManager & mpi)
 
 int main(int argc, char** argv)
 {
-    try
+    /*try
     {
         MPIManager mpiMan(argc, argv);        
 	    calculate(mpiMan);
@@ -104,7 +104,9 @@ int main(int argc, char** argv)
     {
         cerr << e.what() << endl;
         return -1;
-    }
+    }*/
+    
+    calculate();
 
     return 0;
 }
