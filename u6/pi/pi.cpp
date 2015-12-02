@@ -9,7 +9,7 @@
 using namespace std;
 
 #define R 1
-#define ITERATIONS 1000000
+#define ITERATIONS 10000000
 
 class MPIManager
 {
@@ -44,8 +44,8 @@ public:
 
 struct hit_count
 {
-    int points_square_only = 0;
-    int points_circle_only = 0;
+    ulong Ps = 0;
+    ulong Pc = 0;
 };
 
 hit_count hit_test(int iterations)
@@ -63,9 +63,9 @@ hit_count hit_test(int iterations)
         double y = random_coordinate(random_generator);        
         
         if(x*x + y*y <= radius_squared)
-            ++hits.points_circle_only;
+            ++hits.Pc;
         else
-            ++hits.points_square_only;
+            ++hits.Ps;
     }
     
     return hits;
@@ -76,27 +76,19 @@ void calculate(MPIManager & mpi)
     const uint available_threads = omp_get_max_threads();
     const uint iterations_per_thread = ITERATIONS / available_threads;
     
-    hit_count final_hit_count;
+    ulong Ps = 0;
+    ulong Pc = 0;
     
-    #pragma omp parallel default(none) shared(final_hit_count)
+    #pragma omp parallel for default(none) schedule(static,1) reduction(+:Ps,Pc)
+    for (uint i = 0; i < available_threads; ++i)
     {
-        #pragma omp single nowait
-        for (uint i = 0; i < available_threads; ++i)
-        {
-            #pragma omp task
-            {
-                hit_count partial_hit_count = hit_test(iterations_per_thread);
-                
-                #pragma omp atomic update
-                final_hit_count.points_square_only += partial_hit_count.points_square_only;
-                
-                #pragma omp atomic update
-                final_hit_count.points_circle_only += partial_hit_count.points_circle_only;
-            }
-        }
+      hit_count partial_hit_count = hit_test(iterations_per_thread);
+      
+      Ps += partial_hit_count.Ps;
+      Pc += partial_hit_count.Pc;
     }
-    
-    const double pi = 4.0 * final_hit_count.points_circle_only / (double)(final_hit_count.points_square_only + final_hit_count.points_circle_only);
+        
+    const double pi = 4.0 * Pc / (double)(Ps + Pc);
     
     cout << "pi " << pi << endl;
 }
