@@ -9,7 +9,6 @@
 using namespace std;
 
 #define R 1
-#define ITERATIONS 10000000
 
 /*class MPIManager
 {
@@ -57,7 +56,7 @@ hit_count hit_test(int iterations)
     hit_count hits;
     const double radius_squared = R * R;
     
-    for(uint i = 0; i < ITERATIONS; ++i)
+    for(uint i = 0; i < iterations; ++i)
     {
         double x = random_coordinate(random_generator);
         double y = random_coordinate(random_generator);        
@@ -71,10 +70,10 @@ hit_count hit_test(int iterations)
     return hits;
 } 
 
-void calculate()
+void calculate(uint iterations)
 {
     const uint available_threads = omp_get_max_threads();
-    const uint iterations_per_thread = ITERATIONS / available_threads;
+    const uint iterations_per_thread = iterations / available_threads;
     
     ulong Ps = 0;
     ulong Pc = 0;
@@ -90,7 +89,8 @@ void calculate()
         
     const double pi = 4.0 * Pc / (double)(Ps + Pc);
     
-    cout << "pi " << pi << endl;
+    cout.precision(numeric_limits<double>::max_digits10);    
+    cout << "pi " << fixed << pi << endl;
 }
 
 int main(int argc, char** argv)
@@ -106,7 +106,15 @@ int main(int argc, char** argv)
         return -1;
     }*/
     
-    calculate();
+    if(argc != 2)
+    {
+      cout << "pi <iterations>" << endl;
+      return -1;
+    }
+    
+    uint iterations = stoi(argv[1]);
+    
+    calculate(iterations);
 
     return 0;
 }
